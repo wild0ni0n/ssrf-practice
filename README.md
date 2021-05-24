@@ -5,7 +5,7 @@ SSRFの脆弱性を悪用し、隠されたメッセージ(`FLAG_****`)を見つ
 見つけたFLAGはChallengeのページからFLAGの値を送信してください。  
 正しいFLAGを送信することができた場合はCompletionのリストにチェックが付きます。  
 
-発表用資料
+発表用資料  
 https://www.slideshare.net/ssuser12fe9c/ssrf-248482162
 
 ## 必要環境
@@ -13,9 +13,9 @@ https://www.slideshare.net/ssuser12fe9c/ssrf-248482162
 * docker-compose
 
 ## 動かし方
-> $ git clone https://github.com/wild0ni0n/ssrf-practice.git
-> $ cd ssrf-practice
-> $ docker-compose up -d
+> $ git clone https://github.com/wild0ni0n/ssrf-practice.git  
+> $ cd ssrf-practice  
+> $ docker-compose up -d  
 
 ## 止め方
 > $ docker-compose stop
