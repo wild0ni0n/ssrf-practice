@@ -1,0 +1,42 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:1.15.2-alpine-perl
+    build: ./docker/nginx/
+    ports:
+      - "1443:443"
+    depends_on:
+      - php
+    volumes:
+      - ./cert:/usr/local/nginx/conf
+      - ./html:/var/www/html
+      - ./conf/nginx/site.conf:/etc/nginx/conf.d/default.conf
+      - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./conf/nginx/fcgi_params:/etc/nginx/fcgi_params
+      - ./log:/var/log/nginx
+    dns:
+      - 8.8.8.8
+    networks:
+      - backend
+
+  php:
+    build: ./docker/php/
+    volumes:
+      - ./html:/var/www/html
+    tty: true
+    networks:
+      - backend
+
+  secret_web:
+    image: nginx
+    volumes:
+      - ./cert:/usr/local/nginx/conf
+      - ./conf/secret_web/site.conf:/etc/nginx/conf.d/default.conf
+      - ./secret_html:/var/www/secret_html
+    networks:
+      - backend
+networks:
+  backend:
+    ipam:
+          config:
+            - subnet: 1.1.1.0/29
