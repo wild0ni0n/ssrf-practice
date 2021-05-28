@@ -81,31 +81,31 @@ if(isset($_POST["flag"])) {
         <?php if(isset($_COOKIE['FLAG_A7D3C0BA0F'])): ?>
             <li class="list-group-item list-group-item-light">✅ No.1 Solved</li>
         <?php else: ?>
-            <li class="list-group-item list-group-item-light">❌ No.1 Unsolved Challenge</li>
+            <li class="list-group-item list-group-item-light">❌ No.1 Unsolved Challenge (/etc/passwdを覗いてみよう)</li>
         <?php endif ?>
 
         <?php if(isset($_COOKIE['FLAG_9E96EBD40C'])): ?>
             <li class="list-group-item list-group-item-light">✅ No.2 Solved</li>
         <?php else: ?>
-            <li class="list-group-item list-group-item-light">❌ No.2 Unsolved Challenge</li>
+            <li class="list-group-item list-group-item-light">❌ No.2 Unsolved Challenge (サーバが送るリクエストを覗いてみよう)</li>
         <?php endif ?>
 
         <?php if(isset($_COOKIE['FLAG_3488619AE9'])): ?>
             <li class="list-group-item list-group-item-light">✅ No.3 Solved</li>
         <?php else: ?>
-            <li class="list-group-item list-group-item-light">❌ No.3 Unsolved Challenge</li>
+            <li class="list-group-item list-group-item-light">❌ No.3 Unsolved Challenge (管理者ページ https://<?= $_SERVER['SERVER_ADDR'] ?>/admin.php にアクセスしてみよう)</li>
         <?php endif ?>
 
         <?php if(isset($_COOKIE['FLAG_726C6BEDAE'])): ?>
             <li class="list-group-item list-group-item-light">✅ No.4 Solved</li>
         <?php else: ?>
-            <li class="list-group-item list-group-item-light">❌ No.4 Unsolved Challenge</li>
+            <li class="list-group-item list-group-item-light">❌ No.4 Unsolved Challenge (ネットワーク内の端末を探してみよう)</li>
         <?php endif ?>
 
         <?php if(isset($_COOKIE['FLAG_0F363AF467'])): ?>
             <li class="list-group-item list-group-item-light">✅ No.5 Solved</li>
         <?php else: ?>
-            <li class="list-group-item list-group-item-light">❌ No.5 Unsolved Challenge</li>
+            <li class="list-group-item list-group-item-light">❌ No.5 Unsolved Challenge (クラウドメタデータを取得してみよう)</li>
         <?php endif ?>
         </ul>
 </div>

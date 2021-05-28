@@ -12,6 +12,10 @@ https://www.slideshare.net/ssuser12fe9c/ssrf-248482162
 * Docker
 * docker-compose
 
+## 諸注意
+本Webアプリは意図的に脆弱性を作りこんでいます。  
+検証後はアプリを停止してください。  
+
 ## 動かし方
 > $ git clone https://github.com/wild0ni0n/ssrf-practice.git  
 > $ cd ssrf-practice  
