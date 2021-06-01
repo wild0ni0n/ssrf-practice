@@ -37,7 +37,7 @@ https://www.slideshare.net/ssuser12fe9c/ssrf-248482162
 > https://localhost:1443 
 
 リクエスト記録用の攻撃者サーバも用意してます。FLAG取得の過程で使用します。  
-> https://localhost:8888 
+> http://localhost:8888 
 
 
 docker環境をVMで用意しておりNAT設定している場合は、VMのネットワーク設定に以下の設定を入れてください。  
