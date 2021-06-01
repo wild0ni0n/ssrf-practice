@@ -25,7 +25,7 @@ try {
         ]
     ]);
     if(parse_url($_POST['tmp_file_path'], PHP_URL_HOST) === "169.254.169.254") {
-        $path = 'https://'.$_SERVER['SERVER_ADDR'].parse_url($_POST['tmp_file_path'], PHP_URL_PATH);
+        $path = 'http://'.$_SERVER['SERVER_ADDR'].parse_url($_POST['tmp_file_path'], PHP_URL_PATH);
     } else {
         $path = $_POST['tmp_file_path'];
     }

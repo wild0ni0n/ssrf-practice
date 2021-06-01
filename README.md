@@ -5,6 +5,8 @@ SSRFの脆弱性を悪用し、隠されたメッセージ(`FLAG_****`)を見つ
 見つけたFLAGはChallengeのページからFLAGの値を送信してください。  
 正しいFLAGを送信することができた場合はCompletionのリストにチェックが付きます。  
 
+本プログラムについての説明や環境構成などは、プログラム起動後のAboutページに記載しています。  
+
 発表用資料  
 https://www.slideshare.net/ssuser12fe9c/ssrf-248482162
 
@@ -13,7 +15,7 @@ https://www.slideshare.net/ssuser12fe9c/ssrf-248482162
 * docker-compose
 
 ## 諸注意
-本Webアプリは意図的に脆弱性を作りこんでいます。  
+本プログラムは意図的に脆弱性を作りこんでいます。  
 検証後はアプリを停止してください。  
 
 ## 動かし方
@@ -28,11 +30,16 @@ https://www.slideshare.net/ssuser12fe9c/ssrf-248482162
 > $ docker-compose down
 
 ## アクセス方法
-ブラウザで以下のURLにアクセスしてください。
+ブラウザで以下のURLにアクセスしてください。  
 > https://localhost:1443 
 
-docker環境がVMで用意しておりNAT設定している場合は、VMのネットワーク設定に以下の設定を入れてください。  
+リクエスト記録用の攻撃者サーバも用意してます。FLAG取得の過程で使用します。  
+> https://localhost:8888 
+
+
+docker環境をVMで用意しておりNAT設定している場合は、VMのネットワーク設定に以下の設定を入れてください。  
 [host]127.0.0.1:1443 <=>[guest]0.0.0.0:1443
+[host]127.0.0.1:8888 <=>[guest]0.0.0.0:8888
 
 
 # 参考情報

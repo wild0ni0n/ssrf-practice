@@ -30,28 +30,10 @@ if(isset($_POST["flag"])) {
 ?>
 <html>
 <head>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<?php include("header.php"); ?>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="/index.php">SSRF-Practice</a>
-    <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/index.php">Home</span></a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/about.php">About</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/challenge.php">Challenge</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/hints.php">Hints</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+<?php include("nav.php"); ?>
 <div class="container">
 <div class="mt-5 pb-2">
         <h4>FLAG</h4>
@@ -93,7 +75,7 @@ if(isset($_POST["flag"])) {
         <?php if(isset($_COOKIE['FLAG_3488619AE9'])): ?>
             <li class="list-group-item list-group-item-light">✅ No.3 Solved</li>
         <?php else: ?>
-            <li class="list-group-item list-group-item-light">❌ No.3 Unsolved Challenge (管理者ページ https://<?= $_SERVER['SERVER_ADDR'] ?>/admin.php にアクセスしてみよう)</li>
+            <li class="list-group-item list-group-item-light">❌ No.3 Unsolved Challenge (管理者ページ https://<?= $_SERVER['SERVER_ADDR'] ?>:1443/admin.php にアクセスしてみよう)</li>
         <?php endif ?>
 
         <?php if(isset($_COOKIE['FLAG_726C6BEDAE'])): ?>

@@ -6,43 +6,10 @@ if (!file_exists('/tmp/test.db')) {
 ?>
 <html>
 <head>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-<style>
-    .bd-callout {
-        margin-top: -.25rem;
-        padding: 1.25rem;
-        margin-top: 1.25rem;
-        margin-bottom: 1.25rem;
-        border: 1px solid #eee;
-        border-left-width: .25rem;
-        border-radius: .25rem;    
-    }
-    .bd-callout-warning {
-        border-left-color: #f0ad4e;
-    }
-
-</style>
+<?php include("header.php"); ?>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="/index.php">SSRF-Practice</a>
-    <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/index.php">Home</span></a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/about.php">About</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/challenge.php">Challenge</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/hints.php">Hints</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+<?php include("nav.php"); ?>
 <div class="container">
     <div class="mt-5 pb-2">
         <h4>概要</h4>
@@ -59,11 +26,33 @@ if (!file_exists('/tmp/test.db')) {
             <p class="mb-0">WebサーバとPHPの実行環境が異なるため、一部のフラグを見つけるためには内部サーバを探索する必要があります</p>
         </div>
     </div>
+
     <div class="mt-2 pb-2">
         <h4>SSRFとは</h4>
         <p>SSRFは、攻撃者がWebアプリケーションに攻撃者が指定した任意のドメインにリクエストを矯正させる脆弱性です。</p>
         
         <p>SSRFの脆弱性がWebアプリケーションに存在する場合、Webアプリケーションに内部サーバへリクエストを送信させたり、攻撃者自身のドメインに対してリクエストを送信させて、不正なアクションやデータへのアクセスを可能にすることができます。</p>
+    </div>
+    <div class="mt-2 pb-2">
+        <h4>環境について</h4>
+        <p>本アプリでは以下のような構成で動作しています。</p>
+        <img src="topology.png" class="img-fluid" style="max-width: 85%; , height: auto; margin-bottom:15px;">
+        <ul>
+            <li>
+                <code>Nginx</code>: webサーバのコンテナです。PHP-FPMと連携してSSRF-Practiceを動かしています
+                <ul>
+                    <li><code>/admin.php</code>: 管理者用ページです。内部ネットワークからのみアクセスできるページです。</li> 
+                </ul>
+            </li>
+            <li><code>PHP-FPM</code>: アプリケーションコンテナです。</li>
+            <li><code>Secret Web Server</code>: dockerの内部ネットワークにあるwebサーバです。SSRF-Practiceにアクセスしてくるユーザからは本来到達できないサーバです。</li>
+            <li>
+                <code>Attacker's server</code>: 攻撃者が用意したサーバです。ユーザは<a href="http://localhost:8888">http://localhost:8888</a>でアクセスが可能です。docker内部からは<code>http://attacker_server:8888</code>でアクセスできます。このサーバにアクセスしてきたGET,POSTのリクエストを記録します。
+                <ul>
+                    <li><code>/view-log</code>: 記録したリクエストを表示します。</li>
+                </ul>
+            </li>
+        </ul>
     </div>
     <div class="mt-2 pb-2">
         <h4>参考情報</h4>

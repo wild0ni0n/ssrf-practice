@@ -1,48 +1,20 @@
+<?php
+if (!file_exists('/tmp/test.db')) {
+    header("Location: /index.php");
+    exit;
+} 
+?>
 <html>
 <head>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-
-<style>
-    .bd-callout {
-        margin-top: -.25rem;
-        padding: 1.25rem;
-        margin-top: 1.25rem;
-        margin-bottom: 1.25rem;
-        border: 1px solid #eee;
-        border-left-width: .25rem;
-        border-radius: .25rem;    
-    }
-    .bd-callout-warning {
-        border-left-color: #f0ad4e;
-    }
-
-</style>
-
+<?php include("header.php"); ?>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="/index.php">SSRF-Practice</a>
-    <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/index.php">Home</span></a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/about.php">About</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/challenge.php">Challenge</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/hints.php">Hints</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+<?php include("nav.php"); ?>
 <div class="container">
+<div class="mt-5 pb-2">
     <form action="hints.php" method="post">
         <div class="form-group">
-            <label for="level">見たいヒントのHinを指定してください。</label>
+            <label for="level">見たいヒントのHintを指定してください。</label>
             <select class="form-control" id="level" name="hint">
                 <option value="1">SSRFの脆弱性を探す</option>
                 <option value="2">内部ファイルを見つける</option>
@@ -69,10 +41,12 @@
         <?php elseif($_POST['hint'] === "3"): ?>
             <p>攻撃者が保有するドメインにリクエストを送信させることで、サーバリクエスト情報を取得することができます。<br />
             Webアプリケーションによっては、重要情報やトークン値などが漏えいする可能性があります。<br />
-            <p>インターネット上に公開されたドメインを持っていない場合は、Webサービスを利用しましょう<br />
-            Burp Proユーザなら、Burp Collaboratorを使用してみましょう。Burp Proを持っていない方は、<a href="https://webhook.site/">Webhook.site</a>や<a href="https://postb.in/">PostBin</a>を利用しましょう。</p>
+            <p>本アプリでは<a href="http://localhost:8888">攻撃者が用意したサーバ</a>があります。このサーバはアクセス時のリクエストを記録し、記録したリクエストを<code>/view-log</code>のページから閲覧することができます。
+            また、docker内部からは<a href="http://attacker_server:8888">http://attacker_server:8888</a>でアクセスすることができます。(このURLは、ユーザからはアクセスできないので注意してください。)</p>
+            <p>自身でサーバを用意できない場合は、Webサービスを利用する方法もあります。<br />
+            Burp Proユーザなら、Burp Collaboratorを使用してみましょう。Burp Proを持っていない方は、<a href="https://webhook.site/">Webhook.site</a>などが挙げられます。</p>
             <div class="bd-callout bd-callout-warning">
-                <p class="mb-0">Webサービス提供者にリクエスト情報が知られてしまうため、実際の診断では信頼できるWebサービスかどうか確認しましょう。</p>
+                <p class="mb-0">Webサービス提供者にリクエスト情報が知られてしまうため、実際に利用する場合は、信頼できるWebサービスかどうか確認しましょう。</p>
             </div>
         <?php elseif($_POST['hint'] === "4"): ?>
             <p>SSRFの脆弱性を悪用することで、ユーザが直接では到達できないページやバックエンドのシステムにアクセスできる可能性があります。<br />
@@ -89,6 +63,7 @@
             Webアプリケーションがクラウド上の配置されている場合、インスタンスのクレデンシャル情報が漏えいする可能性があります。</p>
         <?php endif ?>
     <?php endif ?>
+</div>
 </div>
 </body>
 </html>

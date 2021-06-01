@@ -58,35 +58,10 @@ if (isset($_POST['mode'])) {
 ?>
 <html>
 <head>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+<?php include("header.php"); ?>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="/index.php">SSRF-Practice</a>
-    <div class="collapse navbar-collapse" id="navbarText">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="/index.php">Home</span></a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/about.php">About</a>
-            </li>
-            <li class="nav-item active">
-                <a class="nav-link" href="/challenge.php">Challenge</a>
-            </li>
-            <li class="nav-item active">
-                <!--
-                # 作業ログ
-                # 2020/6/11
-                # プライベートIPが指定されていたことによりhints.phpがリンク切れを起こしていた問題を修正
-                # 修正前: <a class="nav-link" href="https://<?= $_SERVER['SERVER_ADDR'] ?>/hints.php">Hints</a>
-                # 修正後: <a class="nav-link" href="/hints.php">Hints</a>
-                -->
-                <a class="nav-link" href="/hints.php">Hints</a>
-            </li>
-        </ul>
-    </div>
-</nav>
+<?php include("nav.php"); ?>
 <div class="container">
     <div class="row mt-5 pb-4">
         <div class="col py-3 px-lg-3 border bg-light">

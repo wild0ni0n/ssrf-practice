@@ -4,7 +4,7 @@ services:
     image: nginx:1.15.2-alpine-perl
     build: ./docker/nginx/
     ports:
-      - "1443:443"
+      - "1443:1443"
     depends_on:
       - php
     volumes:
@@ -14,8 +14,6 @@ services:
       - ./conf/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./conf/nginx/fcgi_params:/etc/nginx/fcgi_params
       - ./log:/var/log/nginx
-    dns:
-      - 8.8.8.8
     networks:
       - backend
 
@@ -26,6 +24,7 @@ services:
     tty: true
     networks:
       - backend
+      - untrust
 
   secret_web:
     image: nginx
@@ -35,8 +34,23 @@ services:
       - ./secret_html:/var/www/secret_html
     networks:
       - backend
+  
+  attacker_server:
+    image: python:3-alpine
+    volumes: 
+      - ./app.py:/code/app.py
+    ports:
+      - 8888:8888
+    networks:
+      - untrust
+    command: python /code/app.py
+    
 networks:
   backend:
     ipam:
-          config:
-            - subnet: 1.1.1.0/29
+      config:
+        - subnet: 1.1.1.0/29
+  untrust:
+    ipam:
+      config:
+        - subnet: 2.2.2.0/29
