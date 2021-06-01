@@ -11,7 +11,7 @@ SSRFの脆弱性を悪用し、隠されたメッセージ(`FLAG_****`)を見つ
 https://www.slideshare.net/ssuser12fe9c/ssrf-248482162
 
 ## スクリーンショット
-<img src="./screenshot.png" width="20%" />
+<img src="./screenshot.png" width='600' alt="screenshot" />
 
 ## 必要環境
 * Docker
