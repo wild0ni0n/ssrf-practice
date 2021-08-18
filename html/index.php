@@ -25,36 +25,52 @@ if($init) {
     $db->exec("INSERT INTO users(uid, name, memo) VALUES ('5ee23302443e', 'Sato', 'fugafuga')");
 }
 
-if (isset($_POST['mode'])) {
-    # プロジェクト作成
-    if ($_POST['mode'] == 'create_project') {
-        $stmt = $db->prepare("INSERT INTO projects(name) VALUES (:val)");
-        $stmt->bindValue(':val', $_POST['project_name']);
-        $result = $stmt->execute();
+# プロジェクト作成
+if ($_POST['mode'] == 'create_project' && $_POST['project_name'] !== "") {
+    $stmt = $db->prepare("INSERT INTO projects(name) VALUES (:val)");
+    $stmt->bindValue(':val', $_POST['project_name']);
+    $result = $stmt->execute();
 
-        if (!$result) {
-            die('クエリーが失敗しました。');
-        } else {
-            print('プロジェクトを作成しました。<br>');
-        }
-    } 
+    if (!$result) {
+        die('クエリーが失敗しました。');
+    } else {
+        header('Location: /index.php');
+    }
+} 
 
-    # ユーザ作成
-    if ($_POST['mode'] == 'create_user') {
-        $id = uniqid('');
-        $stmt = $db->prepare('INSERT INTO users(uid, name, memo) VALUES (:id, :name, :memo)');
-        $stmt->bindValue(':id', $id);
-        $stmt->bindValue(':name', $_POST['user_name']);
-        $stmt->bindValue(':memo', $_POST['user_memo']);
-        $result = $stmt->execute();
-        
-        if (!$result) {
-            die('クエリーが失敗しました。');
-        }else{
-            print('ユーザを作成しました。<br>');
-        }
-    } 
+# プロジェクト削除
+if (isset($_GET['del'])) {
+    $stmt = $db->prepare("DELETE FROM projects WHERE id = (:id)");
+    $stmt->bindValue(':id', $_GET['del']);
+    $result = $stmt->execute();
+
+    $stmt = $db->prepare("DELETE FROM project_member WHERE pmid = (:id)");
+    $stmt->bindValue(':id', $_GET['del']);
+    $result2 = $stmt->execute();
+
+    if (!$result && !$result2) {
+        die('クエリーが失敗しました。');
+    }else{
+        header('Location: /index.php');
+    }
+
 }
+
+# ユーザ作成
+if ($_POST['mode'] == 'create_user' && $_POST['user_name'] !== "") {
+    $id = uniqid('');
+    $stmt = $db->prepare('INSERT INTO users(uid, name, memo) VALUES (:id, :name, :memo)');
+    $stmt->bindValue(':id', $id);
+    $stmt->bindValue(':name', $_POST['user_name']);
+    $stmt->bindValue(':memo', $_POST['user_memo']);
+    $result = $stmt->execute();
+    
+    if (!$result) {
+        die('クエリーが失敗しました。');
+    }else{
+        header('Location: /index.php');
+    }
+} 
 ?>
 <html>
 <head>
@@ -107,6 +123,7 @@ if (isset($_POST['mode'])) {
                 print("<td>".h($row['id'])."</td>");
                 print("<td>".h($row['name'])."</td>");
                 print("<td><a href=\"project.php?pid=".h($row['id'])."\">詳細</a></td>");
+                print("<td><a href=\"index.php?del=".h($row['id'])."\">削除</a></td>");
                 print("</tr>");
             }
             ?>

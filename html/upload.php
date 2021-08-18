@@ -1,5 +1,4 @@
 <?php
-ini_set("display_errors", "Off");
 if (!file_exists('/tmp/test.db')) {
     header("Location: /index.php");
     exit;
@@ -18,16 +17,24 @@ try {
         'http' => [
             'header' => 'Cookie: secret=FLAG_9E96EBD40C',
             'timeout' => 5,
+            'user_agent' => 'ua',
         ],
         'ssl' => [
             'verify_peer' => false,
             'verify_peer_name' => false,
         ]
     ]);
-    if(parse_url($_POST['tmp_file_path'], PHP_URL_HOST) === "169.254.169.254") {
-        $path = 'http://'.$_SERVER['SERVER_ADDR'].parse_url($_POST['tmp_file_path'], PHP_URL_PATH);
+
+    if($_POST["mode"] === "import") {
+        $url = $_POST['url'];
+    }else {
+        $url = $_POST['tmp_file_path'];
+    }
+
+    if(parse_url($url, PHP_URL_HOST) === "169.254.169.254") {
+        $path = 'http://'.$_SERVER['SERVER_ADDR'].parse_url($url, PHP_URL_PATH);
     } else {
-        $path = $_POST['tmp_file_path'];
+        $path = $url;
     }
     $data = file_get_contents($path, FALSE, $context);
     if(!$data) {

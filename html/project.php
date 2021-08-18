@@ -3,15 +3,7 @@ if (!file_exists('/tmp/test.db')) {
     header("Location: /index.php");
     exit;
 } 
-?>
 
-<html>
-<head>
-<?php include("header.php"); ?>
-</head>
-<body>
-<?php include("nav.php"); ?>
-<?php
 function h($arg) {
     return htmlspecialchars($arg);
 }
@@ -48,67 +40,78 @@ if( isset($_GET['pid']) ) {
     die('存在しないプロジェクトです');
 }
 
-if (isset($_POST['mode'])) {
-    # プロジェクト参加
-    if ($_POST['mode'] == 'join') {
-        # ユーザIDが存在するか確認
-        $stmt = $db->prepare("SELECT count(*) FROM users WHERE uid = :uid");
-        $stmt->bindValue(':uid', $_POST["userid"]);
-        $result = $stmt->execute();
-        $row = $result->fetchArray();
-        if(!$row[0]) {
-            die('存在しないユーザIDです');
-        }
-                
-        # 現在のプロジェクトメンバーをカウント
-        $stmt = $db->prepare("SELECT count(*) FROM project_member WHERE pid = :pid");
-        $stmt->bindValue(':pid', $_GET["pid"]);
-        $result = $stmt->execute();
-        $count = $result->fetchArray()[0];
+# プロジェクト参加
+if ($_POST['mode'] == 'join' && $_POST['userid'] !== "" && $_GET['pid'] !== "") {
+    # ユーザIDが存在するか確認
+    $stmt = $db->prepare("SELECT count(*) FROM users WHERE uid = :uid");
+    $stmt->bindValue(':uid', $_POST['userid']);
+    $result = $stmt->execute();
+    $row = $result->fetchArray();
+    if(!$row[0]) {
+        die('存在しないユーザIDです');
+    }
+            
+    # 現在のプロジェクトメンバーをカウント
+    $stmt = $db->prepare("SELECT count(*) FROM project_member WHERE pid = :pid");
+    $stmt->bindValue(':pid', $_GET["pid"]);
+    $result = $stmt->execute();
+    $count = $result->fetchArray()[0];
+
+    $stmt = $db->prepare("INSERT INTO project_member(pmid, uid, pid, role) VALUES (:pmid, :uid, :pid, 0)");
+    $stmt->bindValue(':pmid', ++$count);
+    $stmt->bindValue(':uid', $_POST['userid']);
+    $stmt->bindValue(':pid', $_GET['pid']);
+    $stmt->execute();
+
+    header('Location: /project.php?pid='.intval($_GET['pid']));
+}
     
-        $stmt = $db->prepare("INSERT INTO project_member(pmid, uid, pid, role) VALUES (:pmid, :uid, :pid, 0)");
-        $stmt->bindValue(':pmid', ++$count);
-        $stmt->bindValue(':uid', $_POST["userid"]);
-        $stmt->bindValue(':pid', $_GET["pid"]);
-        $stmt->execute();
+# ロール変更
+if ($_POST['mode'] == 'change' && $_POST['pmid']  !== "" && $_GET['pid'] !== "") {
+    $stmt = $db->prepare("SELECT role FROM project_member WHERE pmid = :pmid AND pid = :pid");
+    $stmt->bindValue(':pmid', $_POST['pmid']);
+    $stmt->bindValue(':pid', $_GET['pid']);
+    $result = $stmt->execute();
+    $current_role = $result->fetchArray()[0];
+
+    $changed_role = $current_role === 0? 1:0; 
+
+    $stmt = $db->prepare("UPDATE project_member SET role = :role WHERE pmid = :pmid AND pid = :pid");
+    $stmt->bindValue(':role', $changed_role);
+    $stmt->bindValue(':pmid', $_POST['pmid']);
+    $stmt->bindValue(':pid', $_GET['pid']);
+    $result = $stmt->execute();
+
+    if (!$result) {
+        die('クエリーが失敗しました。');
     }
-    
-    # ロール変更
-    if ($_POST['mode'] == 'change') {
-        $stmt = $db->prepare("SELECT role FROM project_member WHERE pmid = :pmid AND pid = :pid");
-        $stmt->bindValue(':pmid', $_POST['pmid']);
-        $stmt->bindValue(':pid', $_GET['pid']);
-        $result = $stmt->execute();
-        $current_role = $result->fetchArray()[0];
+    header('Location: /project.php?pid='.intval($_GET['pid']));
+}
 
-        $changed_role = $current_role === 0? 1:0; 
-
-        $stmt = $db->prepare("UPDATE project_member SET role = :role WHERE pmid = :pmid AND pid = :pid");
-        $stmt->bindValue(':role', $changed_role);
-        $stmt->bindValue(':pmid', $_POST['pmid']);
-        $stmt->bindValue(':pid', $_GET['pid']);
-        $result = $stmt->execute();
-
-        if (!$result) {
-            die('クエリーが失敗しました。');
-        }
+# プロジェクトから脱退
+if ($_POST['mode'] == 'delete' && $_POST['pmid']  !== "" && $_GET['pid'] !== "") {
+    # PMIDが存在するか確認
+    $stmt = $db->prepare("UPDATE project_member SET delflag = 1 WHERE pmid = :pmid AND pid = :pid");
+    $stmt->bindValue(':pmid', $_POST['pmid']);
+    $stmt->bindValue(':pid', $_GET['pid']);
+    $result = $stmt->execute();
+    if(!$result) {
+        die('存在しないPMIDです');
     }
+    header('Location: /project.php?pid='.intval($_GET['pid']));
+}
 
-    # プロジェクトから脱退
-    if ($_POST['mode'] == 'delete') {
-        # PMIDが存在するか確認
-        $stmt = $db->prepare("UPDATE project_member SET delflag = 1 WHERE pmid = :pmid AND pid = :pid");
-        $stmt->bindValue(':pmid', $_POST['pmid']);
-        $stmt->bindValue(':pid', $_GET['pid']);
-        $result = $stmt->execute();
-        if(!$result) {
-            die('存在しないPMIDです');
-        }
-    }
+if ($_POST['mode'] == 'import' && $_POST['url']  !== "" && $_GET['pid'] !== "") {
 
 }
-?>
 
+?>
+<html>
+<head>
+<?php include("header.php"); ?>
+</head>
+<body>
+<?php include("nav.php"); ?>
 <div class="container">
     <div class="mt-5 pb-4">
         <h4>プロジェクトに参加しているユーザ一覧</h4>
@@ -163,6 +166,18 @@ if (isset($_POST['mode'])) {
                 </div>
                 <button type="submit" class="btn btn-primary mb-2">アップロード</button>
             </form>
+            <hr>
+            <h5>外部サイトからインポート</h5>
+            <form action="upload.php" method="post">
+                <div class="form-group">
+                    <input type="hidden" name="mode" value="import">
+                    <input type="hidden" name="pid" value="<?= h($_GET['pid']) ?>">
+                    <div class="mb-2 mr-3">
+                        <input type="text" class="form-control" name="url" value="" placeholder="https://<?= h($_SERVER['HTTP_HOST']) ?>/sample-user-list.txt">
+                    </div>
+                    <button type="submit" class="btn btn-primary mb-2">インポート</button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -191,12 +206,15 @@ if (isset($_POST['mode'])) {
         </div>
     </div>
 
-    <h4>エクスポート</h4>
-    <div class="p-4">
-        <form action="download.php?pid=<?= $_GET['pid'] ?>" method="post">
-            <input type="hidden" name="mode" value="download">
-            <button type="submit" class="btn btn-primary mb-2">プロジェクトに参加しているユーザリストをダウンロードする</button>
-        </form>
+    <h4>インポート・エクスポート</h4>
+    <div class="row p-4">
+        <div class="col py-3 px-lg-3 border bg-light">
+            <h5>ユーザリストのエクスポート</h5>
+            <form action="download.php?pid=<?= $_GET['pid'] ?>" method="post">
+                <input type="hidden" name="mode" value="download">
+                <button type="submit" class="btn btn-primary mb-2">CSV形式でエクスポート</button>
+            </form>
+        </div>
     </div>
 </div>
 <?php 

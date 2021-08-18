@@ -21,6 +21,9 @@ if (!file_exists('/tmp/test.db')) {
             正しいFLAGを送信することができた場合はCompletionのリストにチェックが付きます。
         </p>
         <p>FLAGは全部で<strong>5</strong>個あります。</p>
+        <p>
+            2021/8月 追記: 脆弱性の仕組みを分かりやすくするため直接的な機能と脆弱性を追加しました。
+        </p>
         <div class="bd-callout bd-callout-warning">
             <p class="mb-0">本プログラムは複数のDockerコンテナで構成されています。</p>
             <p class="mb-0">WebサーバとPHPの実行環境が異なるため、一部のフラグを見つけるためには内部サーバを探索する必要があります</p>
