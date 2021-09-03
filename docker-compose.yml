@@ -3,6 +3,8 @@ services:
   nginx:
     image: nginx:1.15.2-alpine-perl
     build: ./docker/nginx/
+    expose:
+      - 80
     ports:
       - "1443:1443"
     depends_on:

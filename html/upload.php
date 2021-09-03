@@ -12,7 +12,7 @@ try {
     $stmt->bindValue(':pid', $_POST["pid"]);
     $result = $stmt->execute();
     $count = $result->fetchArray()[0];
-
+    
     $context = stream_context_create([
         'http' => [
             'header' => 'Cookie: secret=FLAG_9E96EBD40C',
@@ -32,9 +32,12 @@ try {
     }
 
     if(parse_url($url, PHP_URL_HOST) === "169.254.169.254") {
-        $path = 'http://'.$_SERVER['SERVER_ADDR'].parse_url($url, PHP_URL_PATH);
+        $path = 'http://nginx'.parse_url($url, PHP_URL_PATH);
     } else {
         $path = $url;
+    }
+    if (!preg_match('/^(http|https):\/\/.*/i', $path) && preg_match('/\.php$/i', $path) ) {
+        throw new Exception();
     }
     $data = file_get_contents($path, FALSE, $context);
     if(!$data) {
